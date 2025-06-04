@@ -1,14 +1,14 @@
 import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
-import dotenv from 'dotenv';
 
-import contactsRouter from './routers/contacts.js';
+import router from './routers/index.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import { getEnvVar } from './utils/getEnvVar.js';
+import cookieParser from 'cookie-parser';
 
-dotenv.config();
-const PORT = Number(process.env.PORT || 3000);
+const PORT = Number(getEnvVar('PORT', '3000'));
 
 export const setupServer = () => {
   const app = express();
@@ -16,6 +16,7 @@ export const setupServer = () => {
 
   app.use(
     pino({
+      level: 'silent',
       transport: {
         target: 'pino-pretty',
       },
@@ -23,6 +24,7 @@ export const setupServer = () => {
   );
 
   app.use(cors());
+  app.use(cookieParser());
 
   app.use((req, res, next) => {
     req.log.info({
@@ -34,7 +36,7 @@ export const setupServer = () => {
     next();
   });
 
-  app.use(contactsRouter);
+  app.use(router);
 
   app.use(notFoundHandler);
 
