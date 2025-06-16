@@ -5,6 +5,3 @@
 .vscode
 .DS_Store
 .idea
-
-src/tmp/*
-!src/tmp/.gitkeep
